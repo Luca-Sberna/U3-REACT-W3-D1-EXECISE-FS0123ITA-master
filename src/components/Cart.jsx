@@ -1,9 +1,10 @@
 import { Col, Row, Button, ListGroup } from "react-bootstrap";
 import { FaTrash, FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { removeFromCartAction } from "../redux/actions";
 
 const Cart = () => {
-  const cart = useSelector(state => state.cart.content);
+  const cart = useSelector((state) => state.cart.content);
   const dispatch = useDispatch();
   // cart sarà l'array contenuto in state.cart.content
 
@@ -12,7 +13,14 @@ const Cart = () => {
       <Col sm={12} className="font-weight-bold mb-5 ms-3">
         TOTAL:{" "}
         <span className="display-6 text-primary">
-          {cart.reduce((accumulator, currentValue) => accumulator + parseFloat(currentValue.price), 0).toFixed(2)}€
+          {cart
+            .reduce(
+              (accumulator, currentValue) =>
+                accumulator + parseFloat(currentValue.price),
+              0,
+            )
+            .toFixed(2)}
+          €
         </span>
       </Col>
       <Col sm={12} className="mb-5">
@@ -23,12 +31,16 @@ const Cart = () => {
                 <Button
                   variant="danger"
                   onClick={() => {
-                    dispatch({ type: "REMOVE_FROM_CART", payload: i });
+                    dispatch(removeFromCartAction(i));
                   }}
                 >
                   <FaTrash />
                 </Button>
-                <img className="book-cover-small" src={book.imageUrl} alt="book selected" />
+                <img
+                  className="book-cover-small"
+                  src={book.imageUrl}
+                  alt="book selected"
+                />
                 {book.title}
               </ListGroup.Item>
             ))

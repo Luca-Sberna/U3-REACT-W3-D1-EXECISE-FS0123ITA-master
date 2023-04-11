@@ -1,11 +1,13 @@
-import { Col, Row, Button } from "react-bootstrap";
+import { Col, Row, Button, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { addToCartAction, addToCartActionWithThunk } from "../redux/actions";
 
 const BookDetail = () => {
   const dispatch = useDispatch();
-  const bookSelected = useSelector(state => state.bookSelected.content);
   // useDispatch ci ritorna la funzione che avvierà, quando chiamata (con l'action), avvierà il processo di modifica dello Store
-
+  const bookSelected = useSelector(state => state.bookSelected.content);
+  const userName = useSelector(state => state.user.content);
+  const hasFetchError = useSelector(state => state.books.hasError);
   return (
     <div className="mt-3 mb-4 mb-lg-0">
       {bookSelected ? (
@@ -33,14 +35,22 @@ const BookDetail = () => {
                   <span className="font-weight-bold">Price:</span>&nbsp;
                   <span className="display-6 text-primary">{bookSelected.price}€</span>
                 </p>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    dispatch({ type: "ADD_TO_CART", payload: bookSelected });
-                  }}
-                >
-                  ADD TO CART
-                </Button>
+                {userName ? (
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      // dispatch({ type: ADD_TO_CART, payload: bookSelected });
+                      dispatch(addToCartActionWithThunk(bookSelected));
+                      // sto dispatchando un'action creator
+                      // è la stessa cosa che dispatchare l'action
+                      // perchè l'action creator è una funzione che torna l'action
+                    }}
+                  >
+                    ADD TO CART
+                  </Button>
+                ) : (
+                  <Alert variant="info">Loggati prima di procedere</Alert>
+                )}
               </div>
             </Col>
           </Row>
@@ -48,7 +58,9 @@ const BookDetail = () => {
       ) : (
         <Row>
           <Col sm={12}>
-            <h3 className="display-6">👈Start by clicking on a book!</h3>
+            <h3 className="display-6">
+              {!hasFetchError ? "👈Start by clicking on a book!" : "Qualcosa è andato storto"}
+            </h3>
           </Col>
         </Row>
       )}

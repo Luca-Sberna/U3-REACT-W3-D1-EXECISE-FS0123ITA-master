@@ -2,6 +2,8 @@
 // il reducer prende lo stato corrende dell'applicazione nel momento in cui viene "risvegliato", e prende anche l'azione che gli arriva con un dispatch();
 // a quel punto ne leggerà il "type" e con queste due informazioni genererà il nuovo stato globale dell'applicazione
 
+import { ADD_TO_CART, REMOVE_FROM_CART, SELECT_BOOK, SET_ADMIN_NAME, SET_USER_NAME } from "../actions";
+
 // da dove cominciamo? si comincia da uno stato iniziale
 
 const initialState = {
@@ -10,6 +12,9 @@ const initialState = {
   },
   bookSelected: {
     content: null
+  },
+  user: {
+    content: ""
   },
   admin: { content: "Stefano" } // inutilizzato, serve come esempio di proprietà esterana a cart che viene mantenuta anche dopo il cambio di stato
 };
@@ -22,19 +27,19 @@ const mainReducer = (state = initialState, action) => {
   // da questa funzione, IN OGNI CASO o SITUAZIONE, dovremo PER FORZA ritornare IL NUOVO STATO globale dell'app
   switch (action.type) {
     // qui inseriamo i vari casi, per i diversi "type" degli oggetti "action" che arriveranno con la "dispatch"
-    case "ADD_TO_CART":
+    case ADD_TO_CART:
       return {
         ...state,
         cart: {
           ...state.cart,
-          //content: state.cart.content.push(action.payload) // ASSOLUTAMENTE NO!!! push è un metodo che muta l'array originario (nelle funzioni pure non si può fare),
+          // content: state.cart.content.push(action.payload) // ASSOLUTAMENTE NO!!! push è un metodo che muta l'array originario (nelle funzioni pure non si può fare),
           // ma ritorna anche un valore che per noi è solo dannoso, ossia: la length del nuovo array, sostituendo l'array originario per un numero.... poco utile
 
           // content: state.cart.content.concat(action.payload) // Sì
           content: [...state.cart.content, action.payload]
         }
       };
-    case "REMOVE_FROM_CART":
+    case REMOVE_FROM_CART:
       return {
         ...state,
         cart: {
@@ -46,11 +51,28 @@ const mainReducer = (state = initialState, action) => {
         }
       };
 
-    case "SELECT_BOOK":
+    case SELECT_BOOK:
       return {
         ...state,
         bookSelected: {
           ...state.bookSelected,
+          content: action.payload
+        }
+      };
+
+    case SET_ADMIN_NAME:
+      return {
+        ...state,
+        admin: {
+          ...state.admin,
+          content: action.payload
+        }
+      };
+    case SET_USER_NAME:
+      return {
+        ...state,
+        user: {
+          ...state.user,
           content: action.payload
         }
       };
